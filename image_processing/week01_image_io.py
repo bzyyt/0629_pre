@@ -148,7 +148,7 @@ pic1 = cv2.imread("../asserts/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
-m = np.float32([[1, 0, 100], [0, 1, 100]])
+m = np.array([[1, 0, 100], [0, 1, 100]], dtype=np.float32)
 pic2 = cv2.warpAffine(image, m, (image.shape[1], image.shape[0]))
 plt.imshow(pic2)
 plt.axis("off")
