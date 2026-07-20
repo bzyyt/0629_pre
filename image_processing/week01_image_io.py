@@ -17,6 +17,7 @@ cv2.imshow("test", pic1)
 # 保持显示
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
 # %%
 # 用numpy查改像素
 pic1 = cv2.imread("../asserts/pic1.jpg")
@@ -41,6 +42,7 @@ print(int(pic1[780, 100, 2]))  # red
 # 以上写法已经过时
 pic1[780, 100] = [0, 0, 0]
 print(pic1[780, 100])
+
 # %%
 # 创建图像
 pic1 = cv2.imread("../asserts/pic1.jpg")
@@ -62,4 +64,134 @@ if pic3 is None:
 
 result = cv2.addWeighted(pic2, 1, pic3, 1, 0)
 cv2.imshow("result", result)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# %%
+# 图像属性
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+print(pic1.shape)
+print(pic1.size)
+print(pic1.dtype)
+
+# %%
+# 图像通道的分离
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+b, g, r = cv2.split(pic1)
+cv2.imshow("blue", b)
+cv2.imshow("green", g)
+cv2.imshow("red", r)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# %%
+# HSV颜色空间
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+hsv = cv2.cvtColor(pic1, cv2.COLOR_BGR2HSV)
+plt.imshow(hsv)
+plt.axis("off")
+plt.show()
+h, s, v = cv2.split(hsv)
+plt.subplot(1, 3, 1)
+plt.imshow(h, cmap="hsv")  # 色调
+plt.axis("off")
+plt.title("Hue")
+plt.subplot(1, 3, 2)
+plt.imshow(s, cmap="gray")  # 饱和度
+plt.axis("off")
+plt.title("Saturation")
+plt.subplot(1, 3, 3)
+plt.imshow(v, cmap="gray")  # 明度
+plt.axis("off")
+plt.title("Value")
+plt.show()
+
+# %%
+# 图像通道合并
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+b, g, r = cv2.split(pic1)
+m = cv2.merge([b, g, r])
+cv2.imshow("merge", m)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# %%
+# 图像类型转换
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+result = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+cv2.imshow("GREY", result)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# %% [markdown]
+# 图像平移
+# $$
+# 平移矩阵M = \begin{bmatrix}
+# 1 & 0 & \Delta x \\
+# 0 & 1 & \Delta y \\
+# 0 & 0 & 1
+# \end{bmatrix}
+# $$
+# 实际使用的时候只取前两行
+# %%
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+m = np.float32([[1, 0, 100], [0, 1, 100]])
+pic2 = cv2.warpAffine(image, m, (image.shape[1], image.shape[0]))
+plt.imshow(pic2)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像缩放
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+result = cv2.resize(pic1, (200, 100))
+result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+result = cv2.resize(pic1, None, fx=0.5, fy=0.5)
+result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像旋转
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+rows, cols = image.shape[:2]
+m = cv2.getRotationMatrix2D((cols / 2, rows / 2), 60, 1)
+pic2 = cv2.warpAffine(image, m, (image.shape[1], image.shape[0]))
+plt.imshow(pic2)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像翻转
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+pic2 = cv2.flip(image, 1)  # 1表示水平翻转，0表示垂直翻转，-1表示水平和垂直同时翻转
+plt.imshow(pic2)
+plt.axis("off")
+plt.show()
+
 # %%
