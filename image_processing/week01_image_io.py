@@ -195,3 +195,76 @@ plt.axis("off")
 plt.show()
 
 # %%
+# 图像仿射
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+pts1 = np.array([[50, 50], [200, 50], [50, 200]], dtype=np.float32)
+pts2 = np.array([[10, 100], [200, 50], [100, 250]], dtype=np.float32)
+m = cv2.getAffineTransform(pts1, pts2)
+pic2 = cv2.warpAffine(image, m, (image.shape[1], image.shape[0]))
+plt.imshow(pic2)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像透视
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+pts1 = np.array([[50, 50], [200, 50], [50, 200], [200, 200]], dtype=np.float32)
+pts2 = np.array([[10, 100], [200, 50], [100, 250], [250, 250]], dtype=np.float32)
+m = cv2.getPerspectiveTransform(pts1, pts2)
+pic2 = cv2.warpPerspective(image, m, (image.shape[1], image.shape[0]))
+plt.imshow(pic2)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像量化
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+# 将图像转换为8位无符号整数
+image = np.uint8(image)
+plt.imshow(image)
+plt.axis("off")
+plt.show()
+
+# %%
+# 向上取样
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+result = cv2.pyrUp(image)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 向下取样
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+result = cv2.pyrDown(image)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像灰度化
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+plt.imshow(image)
+plt.axis("off")
+plt.show()
+
+# %%
