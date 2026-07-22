@@ -268,3 +268,156 @@ plt.axis("off")
 plt.show()
 
 # %%
+# 二进制阈值化
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+ret, thresh = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 反二进制阈值化
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+ret, thresh = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 截断阈值化
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+ret, thresh = cv2.threshold(image, 127, 255, cv2.THRESH_TRUNC)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 阈值化为0
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+ret, thresh = cv2.threshold(image, 127, 255, cv2.THRESH_TOZERO)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 反阈值化为0
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+ret, thresh = cv2.threshold(image, 127, 255, cv2.THRESH_TOZERO_INV)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 自适应阈值
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+thresh = cv2.adaptiveThreshold(
+    image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2
+)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 自适应高斯阈值
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+thresh = cv2.adaptiveThreshold(
+    image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
+)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像腐蚀
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+kernel = np.ones((5, 5), np.uint8)
+thresh = cv2.erode(image, kernel, iterations=1)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像膨胀
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+kernel = np.ones((5, 5), np.uint8)
+thresh = cv2.dilate(image, kernel, iterations=1)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像开运算
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+kernel = np.ones((5, 5), np.uint8)
+thresh = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像闭运算
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+kernel = np.ones((5, 5), np.uint8)
+thresh = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
+thresh = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+plt.imshow(thresh)
+plt.axis("off")
+plt.show()
+
+# %%
+# 图像梯度
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+kernel = np.ones((5, 5), np.uint8)
+grad = cv2.morphologyEx(image, cv2.MORPH_GRADIENT, kernel)
+grad = cv2.cvtColor(grad, cv2.COLOR_GRAY2RGB)
+plt.imshow(grad)
+plt.axis("off")
+plt.show()
+
+# %%
