@@ -8,6 +8,9 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.rcParams["font.sans-serif"] = ["Microsoft YaHei"]
+plt.rcParams["axes.unicode_minus"] = False
+
 # %%
 # 读取和显示图像
 pic1 = cv2.imread("../asserts/pic1.jpg")
@@ -418,6 +421,101 @@ grad = cv2.morphologyEx(image, cv2.MORPH_GRADIENT, kernel)
 grad = cv2.cvtColor(grad, cv2.COLOR_GRAY2RGB)
 plt.imshow(grad)
 plt.axis("off")
+plt.show()
+
+# %%
+# 顶帽运算
+# 原图-开区间
+# 提取小尺寸的亮点区域
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+kernel = np.ones((5, 5), np.uint8)
+result = cv2.morphologyEx(image, cv2.MORPH_TOPHAT, kernel)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 底帽运算
+# 原图-闭区间
+# 提取小尺寸的暗点区域
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+kernel = np.ones((5, 5), np.uint8)
+result = cv2.morphologyEx(image, cv2.MORPH_BLACKHAT, kernel)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 灰度直方图
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+result = cv2.calcHist([image], [0], None, [256], [0, 256])
+plt.plot(result)
+plt.xlim([0, 256])
+plt.xlabel("灰度值")
+plt.ylabel("像素数量")
+plt.show()
+
+# %%
+# 彩色直方图
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+color = ("r", "g", "b")
+for i, col in enumerate(color):
+    result = cv2.calcHist([image], [i], None, [256], [0, 256])
+    plt.plot(result, color=col, label=col.upper())
+plt.xlim([0, 256])
+plt.xlabel("颜色值")
+plt.ylabel("像素数量")
+plt.legend()
+plt.show()
+
+# %%
+# 掩膜直方图
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+mask = np.zeros(image.shape[:2], np.uint8)
+mask[100:300, 100:300] = 255
+color = ("r", "g", "b")
+for i, col in enumerate(color):
+    result = cv2.calcHist([image], [i], mask, [256], [0, 256])
+    plt.plot(result, color=col, label=col.upper())
+plt.xlim([0, 256])
+plt.xlabel("灰度值")
+plt.ylabel("像素数量")
+plt.show()
+
+# %%
+# HS直方图
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2HSV)
+result = cv2.calcHist([image], [0, 1], None, [180, 256], [0, 180, 0, 256])
+plt.imshow(
+    result,
+    interpolation="nearest",
+    aspect="auto",
+    origin="lower",
+    extent=[0, 256, 0, 180],
+)
+plt.xlabel("色调")
+plt.ylabel("饱和度")
+plt.colorbar(label="Pixel count")
 plt.show()
 
 # %%
