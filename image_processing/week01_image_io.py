@@ -519,3 +519,125 @@ plt.colorbar(label="Pixel count")
 plt.show()
 
 # %%
+# 直方图均衡化
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+equ = cv2.equalizeHist(image)
+equ = cv2.cvtColor(equ, cv2.COLOR_GRAY2RGB)
+plt.imshow(equ)
+plt.axis("off")
+plt.show()
+
+# %%
+# 局部直方图均衡化
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+result = clahe.apply(image)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+
+# %%
+# 自动色彩均衡化
+def auto_color_balance(
+    image: np.ndarray,
+    radius: int = 5,
+    alpha: float = 8.0,
+    clip_percent: float = 0.5,
+) -> np.ndarray:
+
+    if image is None:
+        raise ValueError("输入图像为空")
+
+    src = image.astype(np.float32) / 255.0
+    height, width = src.shape[:2]
+
+    # 镜像拓展边界
+    padded = cv2.copyMakeBorder(
+        src, radius, radius, radius, radius, cv2.BORDER_REFLECT_101
+    )
+    response = np.zeros_like(src, dtype=np.float32)
+    weight_sum = 0.0
+
+    # 将当前像素与周围像素进行比较
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            if dy == 0 and dx == 0:
+                continue
+            distance = np.hypot(dy, dx)
+            weight = 1.0 / distance
+            shifted = padded[
+                radius + dy : radius + dy + height, radius + dx : radius + dx + width
+            ]
+            difference = np.clip(alpha * (src - shifted), -1.0, 1.0)
+            response += weight * difference
+            weight_sum += weight
+    response /= weight_sum
+
+    strength = 0.3
+    result = np.clip(src + strength * response, 0.0, 1.0)
+
+    return np.round(result * 255.0).astype(np.uint8)
+
+
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+result = auto_color_balance(pic1, radius=15, alpha=2.5, clip_percent=1.0)
+result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 均值滤波
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+blur = cv2.blur(pic1, (5, 5))
+image = cv2.cvtColor(blur, cv2.COLOR_BGR2RGB)
+plt.imshow(image)
+plt.axis("off")
+plt.show()
+
+# %%
+# 方框滤波
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+box = cv2.boxFilter(pic1, -1, (3, 3), normalize=False)
+image = cv2.cvtColor(box, cv2.COLOR_BGR2RGB)
+plt.imshow(image)
+plt.axis("off")
+plt.show()
+
+# %%
+# 高斯滤波
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+gaussian = cv2.GaussianBlur(pic1, (5, 5), 0)
+image = cv2.cvtColor(gaussian, cv2.COLOR_BGR2RGB)
+plt.imshow(image)
+plt.axis("off")
+plt.show()
+
+# %%
+# 中值滤波
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+median = cv2.medianBlur(pic1, 5)
+image = cv2.cvtColor(median, cv2.COLOR_BGR2RGB)
+plt.imshow(image)
+plt.axis("off")
+plt.show()
+
+# %%
