@@ -461,7 +461,7 @@ if pic1 is None:
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
 result = cv2.calcHist([image], [0], None, [256], [0, 256])
 plt.plot(result)
-plt.xlim([0, 256])
+plt.xlim((0, 256))
 plt.xlabel("灰度值")
 plt.ylabel("像素数量")
 plt.show()
@@ -476,7 +476,7 @@ color = ("r", "g", "b")
 for i, col in enumerate(color):
     result = cv2.calcHist([image], [i], None, [256], [0, 256])
     plt.plot(result, color=col, label=col.upper())
-plt.xlim([0, 256])
+plt.xlim((0, 256))
 plt.xlabel("颜色值")
 plt.ylabel("像素数量")
 plt.legend()
@@ -494,7 +494,7 @@ color = ("r", "g", "b")
 for i, col in enumerate(color):
     result = cv2.calcHist([image], [i], mask, [256], [0, 256])
     plt.plot(result, color=col, label=col.upper())
-plt.xlim([0, 256])
+plt.xlim((0, 256))
 plt.xlabel("灰度值")
 plt.ylabel("像素数量")
 plt.show()
@@ -511,7 +511,7 @@ plt.imshow(
     interpolation="nearest",
     aspect="auto",
     origin="lower",
-    extent=[0, 256, 0, 180],
+    extent=(0.0, 256.0, 0.0, 180.0),
 )
 plt.xlabel("色调")
 plt.ylabel("饱和度")
@@ -637,6 +637,125 @@ if pic1 is None:
 median = cv2.medianBlur(pic1, 5)
 image = cv2.cvtColor(median, cv2.COLOR_BGR2RGB)
 plt.imshow(image)
+plt.axis("off")
+plt.show()
+
+# %%
+# 双边滤波
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+bilateral = cv2.bilateralFilter(pic1, 15, 150, 150)
+image = cv2.cvtColor(bilateral, cv2.COLOR_BGR2RGB)
+plt.imshow(image)
+plt.axis("off")
+plt.show()
+
+# %%
+# Roberts算子
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+kernelx = np.array([[-1, 0], [0, 1]], dtype=int)
+kernely = np.array([[0, -1], [1, 0]], dtype=int)
+x = cv2.filter2D(image, cv2.CV_16S, kernelx)
+y = cv2.filter2D(image, cv2.CV_16S, kernely)
+absX = cv2.convertScaleAbs(x)
+absY = cv2.convertScaleAbs(y)
+result = cv2.addWeighted(absX, 0.5, absY, 0.5, 0)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# Prewitt算子
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+kernelx = np.array([[1, 1, 1], [0, 0, 0], [-1, -1, -1]], dtype=int)
+kernely = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]], dtype=int)
+x = cv2.filter2D(image, cv2.CV_16S, kernelx)
+y = cv2.filter2D(image, cv2.CV_16S, kernely)
+absX = cv2.convertScaleAbs(x)
+absY = cv2.convertScaleAbs(y)
+result = cv2.addWeighted(absX, 0.5, absY, 0.5, 0)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# Sobel 算子
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+x = cv2.Sobel(image, cv2.CV_16S, 1, 0)
+y = cv2.Sobel(image, cv2.CV_16S, 0, 1)
+absX = cv2.convertScaleAbs(x)
+absY = cv2.convertScaleAbs(y)
+result = cv2.addWeighted(absX, 0.5, absY, 0.5, 0)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# Laplacian 算子
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+result = cv2.Laplacian(image, cv2.CV_16S, ksize=3)
+result = cv2.convertScaleAbs(result)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# Scharr 算子
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+x = cv2.Scharr(image, cv2.CV_16S, 1, 0)
+y = cv2.Scharr(image, cv2.CV_16S, 0, 1)
+absX = cv2.convertScaleAbs(x)
+absY = cv2.convertScaleAbs(y)
+result = cv2.addWeighted(absX, 0.5, absY, 0.5, 0)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# Canny 算子
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+image = cv2.GaussianBlur(image, (3, 3), 0)
+result = cv2.Canny(image, 50, 150)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# LOG算子
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+image = cv2.GaussianBlur(image, (3, 3), 0)
+result = cv2.Laplacian(image, cv2.CV_16S, ksize=3)
+result = cv2.convertScaleAbs(result)
+result = cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+plt.imshow(result)
 plt.axis("off")
 plt.show()
 
