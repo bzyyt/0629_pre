@@ -760,3 +760,201 @@ plt.axis("off")
 plt.show()
 
 # %%
+# 基于纹理的图像分割
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+mask = np.zeros(pic1.shape[:2], dtype=np.uint8)
+bgdModel = np.zeros((1, 65), dtype=np.float64)
+fgdModel = np.zeros((1, 65), dtype=np.float64)
+# 坐标
+rect = (50, 50, 1000, 700)
+cv2.grabCut(pic1, mask, rect, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_RECT)
+mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype("uint8")
+result = pic1 * mask2[:, :, np.newaxis]
+result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# K-Means 聚类算法
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+rows, cols = pic1.shape[:2]
+data = pic1.reshape((rows * cols, 3)).astype(np.float32)
+k = 4
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
+compactness, labels, centers = cv2.kmeans(
+    data, k, None, criteria, 10, cv2.KMEANS_PP_CENTERS
+)
+centers = np.uint8(centers)
+result = centers[labels.flatten()]
+result = result.reshape((rows, cols, 3))
+result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 均值漂移算法
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+result = cv2.pyrMeanShiftFiltering(pic1, 20, 20)
+result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 分水岭算法
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+# 阈值化
+ret, thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+# 形态学操作
+kernel = np.ones((3, 3), np.uint8)
+opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
+# 膨胀
+sure_bg = cv2.dilate(opening, kernel, iterations=3)
+# 距离变换
+distance = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
+# 提取前景
+ret, sure_fg = cv2.threshold(distance, 0.4 * distance.max(), 255, 0)
+sure_fg = np.uint8(sure_fg)
+# 背景
+unknown = cv2.subtract(sure_bg, sure_fg)
+# 标记
+ret, markers = cv2.connectedComponents(sure_fg)
+markers = markers + 1
+markers[unknown == 255] = 0
+# 分水岭
+markers = cv2.watershed(pic1, markers)
+result = pic1.copy()
+result[markers == -1] = [0, 0, 255]
+result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 漫水填充
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = pic1.copy()
+rows, cols = image.shape[:2]
+# 掩码的大小要比原图大2像素
+mask = np.zeros((rows + 2, cols + 2), dtype=np.uint8)
+filled_count, image, mask, rect = cv2.floodFill(
+    image,
+    mask,
+    (30, 30),
+    (0, 255, 255),
+    (20, 20, 20),
+    (20, 20, 20),
+    cv2.FLOODFILL_FIXED_RANGE,
+)
+result = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 傅里叶变换
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+dft = cv2.dft(np.float32(image), flags=cv2.DFT_COMPLEX_OUTPUT)
+dft_shift = np.fft.fftshift(dft, axes=(0, 1))
+result = 20 * np.log(cv2.magnitude(dft_shift[:, :, 0], dft_shift[:, :, 1]))
+plt.imshow(result, cmap="gray")
+plt.axis("off")
+plt.show()
+
+# %%
+# 傅里叶逆变换
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+dft = cv2.dft(np.float32(image), flags=cv2.DFT_COMPLEX_OUTPUT)
+dft_shift = np.fft.fftshift(dft, axes=(0, 1))
+ishift = np.fft.ifftshift(dft_shift, axes=(0, 1))
+idft = cv2.idft(ishift, flags=cv2.DFT_COMPLEX_OUTPUT)
+result = cv2.magnitude(idft[:, :, 0], idft[:, :, 1])
+plt.imshow(result, cmap="gray")
+plt.axis("off")
+plt.show()
+
+# %%
+# numpy 傅里叶变换
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+dft = np.fft.fft2(np.float32(image))
+dft_shift = np.fft.fftshift(dft)
+result = 20 * np.log(np.abs(dft_shift))
+plt.imshow(result, cmap="gray")
+plt.axis("off")
+plt.show()
+ishift = np.fft.ifftshift(dft_shift)
+idft = np.fft.ifft2(ishift)
+result = np.abs(idft)
+plt.imshow(result, cmap="gray")
+plt.axis("off")
+plt.show()
+
+# %%
+# 高通滤波器
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+dft = np.fft.fft2(np.float32(image))
+dft_shift = np.fft.fftshift(dft)
+rows, cols = image.shape
+crow, ccol = rows // 2, cols // 2
+# 创建高通滤波器
+mask = np.ones((rows, cols), np.uint8)
+mask[crow - 30 : crow + 30, ccol - 30 : ccol + 30] = 0
+# 应用滤波器
+dft_shift = dft_shift * mask
+# 傅里叶逆变换
+ishift = np.fft.ifftshift(dft_shift)
+idft = np.fft.ifft2(ishift)
+result = np.abs(idft)
+plt.imshow(result, cmap="gray")
+plt.axis("off")
+plt.show()
+
+# %%
+# 低通滤波器
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+dft = np.fft.fft2(np.float32(image))
+dft_shift = np.fft.fftshift(dft)
+rows, cols = image.shape
+crow, ccol = rows // 2, cols // 2
+# 创建低通滤波器
+mask = np.zeros((rows, cols), np.uint8)
+mask[crow - 30 : crow + 30, ccol - 30 : ccol + 30] = 1
+# 应用滤波器
+dft_shift = dft_shift * mask
+# 傅里叶逆变换
+ishift = np.fft.ifftshift(dft_shift)
+idft = np.fft.ifft2(ishift)
+result = np.abs(idft)
+plt.imshow(result, cmap="gray")
+plt.axis("off")
+plt.show()
+
+# %%
