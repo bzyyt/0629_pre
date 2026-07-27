@@ -181,3 +181,11 @@ cython_debug/
 .cursorindexingignore
 
 # books/
+
+# Microsoft Office 临时锁文件
+~$*.doc
+~$*.docx
+~$*.xls
+~$*.xlsx
+~$*.ppt
+~$*.pptx
