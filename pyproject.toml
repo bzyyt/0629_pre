@@ -5,6 +5,7 @@ description = "研零预训练内容"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "d2l>=0.17.0",
     "ipykernel>=7.3.0",
     "matplotlib>=3.11.1",
     "numpy>=2.4.6",
