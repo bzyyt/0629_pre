@@ -958,3 +958,68 @@ plt.axis("off")
 plt.show()
 
 # %%
+# 霍夫变换
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+image = cv2.Canny(image, 50, 150)
+lines = cv2.HoughLines(image, 1, np.pi / 180, 300)
+for rho, theta in lines[:, 0]:
+    a = np.cos(theta)
+    b = np.sin(theta)
+    x0 = a * rho
+    y0 = b * rho
+    x1 = int(x0 + 1000 * (-b))
+    y1 = int(y0 + 1000 * (a))
+    x2 = int(x0 - 1000 * (-b))
+    y2 = int(y0 - 1000 * (a))
+    cv2.line(pic1, (x1, y1), (x2, y2), (0, 255, 0), 2)
+pic1 = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+plt.imshow(pic1)
+plt.axis("off")
+plt.show()
+
+# %%
+# 累计概率霍夫变换
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+image = cv2.Canny(image, 50, 150)
+lines = cv2.HoughLinesP(image, 1, np.pi / 180, 100, minLineLength=120, maxLineGap=10)
+lines = lines.reshape(-1, 4)
+for x1, y1, x2, y2 in lines:
+    cv2.line(pic1, (x1, y1), (x2, y2), (0, 255, 0), 2)
+result = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
+# 霍夫圆变换
+pic1 = cv2.imread("../asserts/pic1.jpg")
+if pic1 is None:
+    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
+image = cv2.medianBlur(image, 5)
+circles = cv2.HoughCircles(
+    image,
+    cv2.HOUGH_GRADIENT,
+    1.2,
+    80,
+    param1=120,
+    param2=70,
+    minRadius=20,
+    maxRadius=100,
+)
+circles = np.uint16(np.around(circles))
+for i in circles[0, :]:
+    cv2.circle(pic1, (i[0], i[1]), i[2], (0, 255, 0), 2)
+    cv2.circle(pic1, (i[0], i[1]), 2, (0, 0, 255), 3)
+result = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+plt.imshow(result)
+plt.axis("off")
+plt.show()
+
+# %%
