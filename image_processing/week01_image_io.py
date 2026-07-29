@@ -1,262 +1,50 @@
-# %% [markdown]
-# 第一周 Python 与图像基础
-
-
-# %%
-# 依赖
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
+# matplotlib 中文字体问题
 plt.rcParams["font.sans-serif"] = ["Microsoft YaHei"]
 plt.rcParams["axes.unicode_minus"] = False
 
-# %%
-# 读取和显示图像
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-cv2.imshow("test", pic1)
-# 保持显示
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-# %%
-# 用numpy查改像素
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-print(type(pic1))
-
-# numpy读取像素
-# print(pic1.item(780, 100, 0))
-# print(pic1.item(780, 100, 1))
-# print(pic1.item(780, 100, 2))
-# 上面能用，但是不推荐了
-print(pic1[780, 100])
-print(int(pic1[780, 100, 0]))  # blue
-print(int(pic1[780, 100, 1]))  # green
-print(int(pic1[780, 100, 2]))  # red
-
-# numpy修改像素
-# pic1.itemset((780, 100, 0), 0)
-# pic1.itemset((780, 100, 1), 0)
-# pic1.itemset((780, 100, 2), 0)
-# 以上写法已经过时
-pic1[780, 100] = [0, 0, 0]
-print(pic1[780, 100])
-
-# %%
-# 创建图像
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-pic2 = np.zeros(pic1.shape, np.uint8)
-cv2.imshow("empty", pic2)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-# %%
-# 图像融合
-pic2 = cv2.imread("../asserts/pic2.jpg")
-if pic2 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-pic3 = cv2.imread("../asserts/pic3.jpg")
-if pic3 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-
-result = cv2.addWeighted(pic2, 1, pic3, 1, 0)
-cv2.imshow("result", result)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-# %%
-# 图像属性
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-print(pic1.shape)
-print(pic1.size)
-print(pic1.dtype)
-
-# %%
-# 图像通道的分离
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-b, g, r = cv2.split(pic1)
-cv2.imshow("blue", b)
-cv2.imshow("green", g)
-cv2.imshow("red", r)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-# %%
-# HSV颜色空间
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-hsv = cv2.cvtColor(pic1, cv2.COLOR_BGR2HSV)
-plt.imshow(hsv)
-plt.axis("off")
-plt.show()
-h, s, v = cv2.split(hsv)
-plt.subplot(1, 3, 1)
-plt.imshow(h, cmap="hsv")  # 色调
-plt.axis("off")
-plt.title("Hue")
-plt.subplot(1, 3, 2)
-plt.imshow(s, cmap="gray")  # 饱和度
-plt.axis("off")
-plt.title("Saturation")
-plt.subplot(1, 3, 3)
-plt.imshow(v, cmap="gray")  # 明度
-plt.axis("off")
-plt.title("Value")
-plt.show()
-
-# %%
-# 图像通道合并
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-b, g, r = cv2.split(pic1)
-m = cv2.merge([b, g, r])
-cv2.imshow("merge", m)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-# %%
-# 图像类型转换
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-result = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
-cv2.imshow("GREY", result)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-# %% [markdown]
-# 图像平移
-# $$
-# 平移矩阵M = \begin{bmatrix}
-# 1 & 0 & \Delta x \\
-# 0 & 1 & \Delta y \\
-# 0 & 0 & 1
-# \end{bmatrix}
-# $$
-# 实际使用的时候只取前两行
-# %%
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
-m = np.array([[1, 0, 100], [0, 1, 100]], dtype=np.float32)
-pic2 = cv2.warpAffine(image, m, (image.shape[1], image.shape[0]))
-plt.imshow(pic2)
-plt.axis("off")
-plt.show()
-
-# %%
-# 图像缩放
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-result = cv2.resize(pic1, (200, 100))
-result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
-plt.imshow(result)
-plt.axis("off")
-plt.show()
-result = cv2.resize(pic1, None, fx=0.5, fy=0.5)
-result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
-plt.imshow(result)
-plt.axis("off")
-plt.show()
-
-# %%
-# 图像旋转
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
-rows, cols = image.shape[:2]
-m = cv2.getRotationMatrix2D((cols / 2, rows / 2), 60, 1)
-pic2 = cv2.warpAffine(image, m, (image.shape[1], image.shape[0]))
-plt.imshow(pic2)
-plt.axis("off")
-plt.show()
-
-# %%
-# 图像翻转
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
-pic2 = cv2.flip(image, 1)  # 1表示水平翻转，0表示垂直翻转，-1表示水平和垂直同时翻转
-plt.imshow(pic2)
-plt.axis("off")
-plt.show()
-
-# %%
-# 图像仿射
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
-# 确定仿射变换前后的三个点
-pts1 = np.array([[50, 50], [200, 50], [50, 200]], dtype=np.float32)
-pts2 = np.array([[10, 100], [200, 50], [100, 250]], dtype=np.float32)
-m = cv2.getAffineTransform(pts1, pts2)
-pic2 = cv2.warpAffine(image, m, (image.shape[1], image.shape[0]))
-plt.imshow(pic2)
-plt.axis("off")
-plt.show()
-
-# %%
-# 图像透视
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
-# 确定透视变换前后的四个点
-pts1 = np.array([[50, 50], [200, 50], [50, 200], [200, 200]], dtype=np.float32)
-pts2 = np.array([[10, 100], [200, 50], [100, 250], [250, 250]], dtype=np.float32)
-m = cv2.getPerspectiveTransform(pts1, pts2)
-pic2 = cv2.warpPerspective(image, m, (image.shape[1], image.shape[0]))
-plt.imshow(pic2)
-plt.axis("off")
-plt.show()
-
-# %%
-# 图像量化
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
-# 将图像转换为8位无符号整数
-image = np.uint8(image)
-plt.imshow(image)
-plt.axis("off")
-plt.show()
-
-# %%
-# 向上取样
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
-result = cv2.pyrUp(image)
-plt.imshow(result)
-plt.axis("off")
-plt.show()
-
-# %%
-# 向下取样
-pic1 = cv2.imread("../asserts/pic1.jpg")
-if pic1 is None:
-    raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
-image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
-result = cv2.pyrDown(image)
-plt.imshow(result)
-plt.axis("off")
-plt.show()
+for i in range(3):
+    # 读取图像
+    image = cv2.imread("asserts/pic" + str(i + 1) + ".jpg")
+    if image is None:
+        raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
+    plt.figure(figsize=(10, 10))
+    # 显示原图
+    plt.subplot(2, 2, 1)
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title("原图")
+    # 灰度图
+    grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite("results/week1_image_io/pic" + str(i + 1) + "_grey.jpg", grey)
+    plt.subplot(2, 2, 2)
+    plt.imshow(grey, cmap="gray")
+    plt.title("灰度图")
+    # HSV图
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    cv2.imwrite("results/week1_image_io/pic" + str(i + 1) + "_hsv.jpg", hsv)
+    plt.subplot(2, 2, 3)
+    plt.imshow(hsv)
+    plt.title("HSV图")
+    # 缩小图
+    small = cv2.resize(image, (0, 0), fx=0.5, fy=0.5)
+    cv2.imwrite("results/week1_image_io/pic" + str(i + 1) + "_small.jpg", small)
+    plt.subplot(2, 2, 4)
+    plt.imshow(cv2.cvtColor(small, cv2.COLOR_BGR2RGB))
+    plt.title("缩小图")
+    plt.tight_layout()
+    plt.savefig("results/week1_image_io/pic" + str(i + 1) + "_result.jpg")
+    plt.show()
+    # 输出数据
+    print("图片" + str(i + 1) + "的尺寸为：" + str(image.shape[:2]))
+    print("图片" + str(i + 1) + "的通道数为：" + str(image.shape[2]))
+    print(
+        "图片"
+        + str(i + 1)
+        + "的像素值范围为："
+        + str(np.min(image))
+        + " ~ "
+        + str(np.max(image))
+    )
