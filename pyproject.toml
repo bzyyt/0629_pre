@@ -16,12 +16,22 @@ dependencies = [
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 [project.optional-dependencies]
-cpu = ["torch", "torchvision", "torchaudio"]
+cpu = [
+    "torch==2.13.0",
+    "torchvision==0.28.0",
+    "torchaudio==2.11.0",
+]
 
-cuda = ["torch", "torchvision", "torchaudio"]
+cuda = [
+    "torch==2.13.0",
+    "torchvision==0.28.0",
+]
 
 [tool.uv]
 conflicts = [[{ extra = "cpu" }, { extra = "cuda" }]]
+required-environments = [
+    "sys_platform == 'win32' and platform_machine == 'AMD64'",
+]
 
 [tool.uv.sources]
 torch = [
@@ -32,10 +42,7 @@ torchvision = [
     { index = "pytorch-cpu", extra = "cpu" },
     { index = "pytorch-cu132", extra = "cuda" },
 ]
-torchaudio = [
-    { index = "pytorch-cpu", extra = "cpu" },
-    { index = "pytorch-cu132", extra = "cuda" },
-]
+torchaudio = [{ index = "pytorch-cpu", extra = "cpu" }]
 
 [[tool.uv.index]]
 name = "pytorch-cpu"
