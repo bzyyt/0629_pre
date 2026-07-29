@@ -25,7 +25,7 @@ for i in range(4):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     edges = cv2.dilate(edges, kernel)
 
-    # 外轮廓
+    # 连接断裂边缘
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # 提取大轮廓
@@ -38,9 +38,11 @@ for i in range(4):
         # if w > 250 and h > 150:
         #     package_contours.append(contour)
         rect = cv2.minAreaRect(contour)
+
         rect_width, rect_height = rect[1]
         short = min(rect_height, rect_width)
         long = max(rect_width, rect_height)
+        # 尺寸筛选
         if 140 < short < 400 and 240 < long < 500:
             box = cv2.boxPoints(rect)
             box = np.intp(box)
