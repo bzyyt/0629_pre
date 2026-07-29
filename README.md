@@ -41,6 +41,18 @@
 uv sync
 ```
 
+对于有GPU的电脑，在根目录执行：
+
+```powershell
+uv sync --extra cuda
+```
+
+没有GPU的电脑，在根目录执行：
+
+```powershell
+uv sync --extra cpu
+```
+
 依赖安装完成后，在 VS Code 中选择项目虚拟环境：
 
 ```text
