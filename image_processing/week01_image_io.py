@@ -203,6 +203,7 @@ pic1 = cv2.imread("../asserts/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+# 确定仿射变换前后的三个点
 pts1 = np.array([[50, 50], [200, 50], [50, 200]], dtype=np.float32)
 pts2 = np.array([[10, 100], [200, 50], [100, 250]], dtype=np.float32)
 m = cv2.getAffineTransform(pts1, pts2)
@@ -217,6 +218,7 @@ pic1 = cv2.imread("../asserts/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
+# 确定透视变换前后的四个点
 pts1 = np.array([[50, 50], [200, 50], [50, 200], [200, 200]], dtype=np.float32)
 pts2 = np.array([[10, 100], [200, 50], [100, 250], [250, 250]], dtype=np.float32)
 m = cv2.getPerspectiveTransform(pts1, pts2)
