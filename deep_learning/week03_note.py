@@ -4,6 +4,9 @@
 
 # %%
 # 依赖
+import os
+
+import pandas as pd
 import torch
 
 # %% [markdown]
@@ -62,5 +65,120 @@ print(x - y)
 print(x * y)
 print(x / y)
 print(torch.exp(x))
+
+# %%
+# 张量的连结
+# torch.cat()函数可以将多个张量沿着指定的维度连结起来
+x = torch.rand(3, 4)
+y = torch.rand(3, 4)
+z = torch.cat((x, y), dim=0)
+print(z)
+
+# %%
+# 广播机制
+# 两个张量形状不一致的时候，PyTorch会自动进行广播，使得它们能够进行运算。
+x = torch.rand(3, 4)
+y = torch.rand(1, 4)
+z = x + y
+print(z)
+
+# %%
+# 索引和切片
+# 张量的索引和切片机制与python的列表类似。
+x = torch.rand(3, 4)
+print(x[0])  # 第一行
+print(x[:, 0])  # 第一列
+print(x[0:2, 0:2])  # 子矩阵
+
+# %%
+# 原地操作
+x = torch.rand(3, 4)
+z = torch.rand(3, 4)
+z[:] = x + z
+print(z)
+
+
+# %% [markdown]
+# 数据预处理
+
+# %%
+# 生成数据集
+os.makedirs(os.path.join("..", "data"), exist_ok=True)
+data_file = os.path.join("..", "data", "house_tiny.csv")
+with open(data_file, "w") as f:
+    f.write("NumRooms,Alley,Price\n")  # 列名
+    f.write("NA,Pave,127500\n")  # 每行表示一个数据样本
+    f.write("2,NA,106000\n")
+    f.write("4,NA,178100\n")
+    f.write("NA,NA,140000\n")
+
+# %%
+# 读取
+data_file = os.path.join("..", "data", "house_tiny.csv")
+data = pd.read_csv(data_file)
+print(data)
+
+# %%
+# 处理缺失值
+inputs, outputs = data.iloc[:, 0:2], data.iloc[:, 2]
+inputs = inputs.fillna(inputs.mean(numeric_only=True))
+# 新版pandas中，需要指定numeric_only=True来确保只对数值列进行操作
+print(inputs)
+
+# %%
+inputs = pd.get_dummies(inputs, dummy_na=True)
+print(inputs)
+
+# %%
+# 转换为张量
+X = torch.tensor(inputs.to_numpy(dtype=float))
+Y = torch.tensor(outputs.to_numpy(dtype=float))
+print(X)
+print(Y)
+
+
+# %%
+# 自动微分
+# 标量的自动微分
+x = torch.arange(4.0)
+print(x)
+
+# %%
+# 对x启用自动微分
+x.requires_grad_(True)
+print(x.grad)
+
+# %%
+# 计算y = 2 * x^2
+y = 2 * torch.dot(x, x)
+print(y)
+
+# %%
+# 计算y对x的导数
+y.backward()
+print(x.grad)
+
+# %%
+# 计算另外一个函数
+x.grad.zero_()
+y = x.sum()
+y.backward()
+print(x.grad)
+
+# %%
+# 非标量的自动微分
+x.grad.zero_()
+y = x * x
+y.sum().backward()
+print(x.grad)
+
+# %%
+# 分离计算
+x.grad.zero_()
+y = x * x
+u = y.detach()
+z = u * x
+z.sum().backward()
+print(x.grad)
 
 # %%
