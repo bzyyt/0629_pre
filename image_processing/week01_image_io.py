@@ -8,7 +8,7 @@ plt.rcParams["axes.unicode_minus"] = False
 
 for i in range(3):
     # 读取图像
-    image = cv2.imread("asserts/pic" + str(i + 1) + ".jpg")
+    image = cv2.imread("assets/week01/pic" + str(i + 1) + ".jpg")
     if image is None:
         raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
     plt.figure(figsize=(10, 10))

@@ -13,7 +13,7 @@ plt.rcParams["axes.unicode_minus"] = False
 
 # %%
 # 读取和显示图像
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 cv2.imshow("test", pic1)
@@ -23,7 +23,7 @@ cv2.destroyAllWindows()
 
 # %%
 # 用numpy查改像素
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 print(type(pic1))
@@ -48,7 +48,7 @@ print(pic1[780, 100])
 
 # %%
 # 创建图像
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 pic2 = np.zeros(pic1.shape, np.uint8)
@@ -72,7 +72,7 @@ cv2.destroyAllWindows()
 
 # %%
 # 图像属性
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 print(pic1.shape)
@@ -81,7 +81,7 @@ print(pic1.dtype)
 
 # %%
 # 图像通道的分离
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 b, g, r = cv2.split(pic1)
@@ -93,7 +93,7 @@ cv2.destroyAllWindows()
 
 # %%
 # HSV颜色空间
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 hsv = cv2.cvtColor(pic1, cv2.COLOR_BGR2HSV)
@@ -117,7 +117,7 @@ plt.show()
 
 # %%
 # 图像通道合并
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 b, g, r = cv2.split(pic1)
@@ -128,7 +128,7 @@ cv2.destroyAllWindows()
 
 # %%
 # 图像类型转换
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 result = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
@@ -147,7 +147,7 @@ cv2.destroyAllWindows()
 # $$
 # 实际使用的时候只取前两行
 # %%
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
@@ -159,7 +159,7 @@ plt.show()
 
 # %%
 # 图像缩放
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 result = cv2.resize(pic1, (200, 100))
@@ -175,7 +175,7 @@ plt.show()
 
 # %%
 # 图像旋转
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
@@ -188,7 +188,7 @@ plt.show()
 
 # %%
 # 图像翻转
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
@@ -199,7 +199,7 @@ plt.show()
 
 # %%
 # 图像仿射
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
@@ -214,7 +214,7 @@ plt.show()
 
 # %%
 # 图像透视
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
@@ -229,7 +229,7 @@ plt.show()
 
 # %%
 # 图像量化
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
@@ -241,7 +241,7 @@ plt.show()
 
 # %%
 # 向上取样
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)
@@ -252,7 +252,7 @@ plt.show()
 
 # %%
 # 向下取样
-pic1 = cv2.imread("../asserts/pic1.jpg")
+pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2RGB)

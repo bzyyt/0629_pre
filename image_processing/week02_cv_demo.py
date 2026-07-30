@@ -7,7 +7,7 @@ plt.rcParams["axes.unicode_minus"] = False
 
 for i in range(4):
     # 读取图片
-    image = cv2.imread("asserts/week2_work/pic" + str(i + 1) + ".jpg")
+    image = cv2.imread("assets/week02/pic" + str(i + 1) + ".jpg")
     if image is None:
         raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
     result = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
