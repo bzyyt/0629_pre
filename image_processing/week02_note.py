@@ -620,10 +620,16 @@ data = pic1.reshape((rows * cols, 3)).astype(np.float32)
 k = 4
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
 compactness, labels, centers = cv2.kmeans(
-    data, k, None, criteria, 10, cv2.KMEANS_PP_CENTERS
+    data,
+    k,
+    np.empty((data.shape[0], 1), dtype=np.int32),
+    criteria,
+    10,
+    cv2.KMEANS_PP_CENTERS,
 )
-centers = np.uint8(centers)
-result = centers[labels.flatten()]
+centers = centers.astype(np.uint8)
+label_indices = np.asarray(labels, dtype=np.intp).ravel()
+result = centers[label_indices]
 result = result.reshape((rows, cols, 3))
 result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
 plt.imshow(result)
@@ -661,7 +667,7 @@ sure_bg = cv2.dilate(opening, kernel, iterations=3)
 distance = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
 # 提取前景
 ret, sure_fg = cv2.threshold(distance, 0.4 * distance.max(), 255, 0)
-sure_fg = np.uint8(sure_fg)
+sure_fg = np.asarray(sure_fg, dtype=np.uint8)
 # 背景
 unknown = cv2.subtract(sure_bg, sure_fg)
 # 标记
@@ -712,7 +718,7 @@ pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
-dft = cv2.dft(np.float32(image), flags=cv2.DFT_COMPLEX_OUTPUT)
+dft = cv2.dft(image.astype(np.float32), flags=cv2.DFT_COMPLEX_OUTPUT)
 dft_shift = np.fft.fftshift(dft, axes=(0, 1))
 result = 20 * np.log(cv2.magnitude(dft_shift[:, :, 0], dft_shift[:, :, 1]))
 plt.imshow(result, cmap="gray")
@@ -725,7 +731,7 @@ pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
-dft = cv2.dft(np.float32(image), flags=cv2.DFT_COMPLEX_OUTPUT)
+dft = cv2.dft(image.astype(np.float32), flags=cv2.DFT_COMPLEX_OUTPUT)
 dft_shift = np.fft.fftshift(dft, axes=(0, 1))
 ishift = np.fft.ifftshift(dft_shift, axes=(0, 1))
 idft = cv2.idft(ishift, flags=cv2.DFT_COMPLEX_OUTPUT)
@@ -740,7 +746,7 @@ pic1 = cv2.imread("../assets/week01/pic1.jpg")
 if pic1 is None:
     raise FileNotFoundError("图片读取失败，请检查当前工作目录和图片路径")
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
-dft = np.fft.fft2(np.float32(image))
+dft = np.fft.fft2(image.astype(np.float32))
 dft_shift = np.fft.fftshift(dft)
 result = 20 * np.log(np.abs(dft_shift))
 plt.imshow(result, cmap="gray")
@@ -815,6 +821,8 @@ if pic1 is None:
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
 image = cv2.Canny(image, 50, 150)
 lines = cv2.HoughLines(image, 1, np.pi / 180, 300)
+if lines is None:
+    raise RuntimeError("没有检测到直线")
 for rho, theta in lines[:, 0]:
     a = np.cos(theta)
     b = np.sin(theta)
@@ -838,6 +846,8 @@ if pic1 is None:
 image = cv2.cvtColor(pic1, cv2.COLOR_BGR2GRAY)
 image = cv2.Canny(image, 50, 150)
 lines = cv2.HoughLinesP(image, 1, np.pi / 180, 100, minLineLength=120, maxLineGap=10)
+if lines is None:
+    raise RuntimeError("没有检测到线段")
 lines = lines.reshape(-1, 4)
 for x1, y1, x2, y2 in lines:
     cv2.line(pic1, (x1, y1), (x2, y2), (0, 255, 0), 2)
@@ -863,7 +873,9 @@ circles = cv2.HoughCircles(
     minRadius=20,
     maxRadius=100,
 )
-circles = np.uint16(np.around(circles))
+if circles is None:
+    raise RuntimeError("没有检测到圆")
+circles = np.around(circles).astype(np.uint16)
 for i in circles[0, :]:
     cv2.circle(pic1, (i[0], i[1]), i[2], (0, 255, 0), 2)
     cv2.circle(pic1, (i[0], i[1]), 2, (0, 0, 255), 3)
