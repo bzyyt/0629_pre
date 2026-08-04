@@ -141,6 +141,7 @@ print(Y)
 # 自动微分
 # 标量的自动微分
 x = torch.arange(4.0)
+assert x.grad is not None
 print(x)
 
 # %%
@@ -180,5 +181,3 @@ u = y.detach()
 z = u * x
 z.sum().backward()
 print(x.grad)
-
-# %%
