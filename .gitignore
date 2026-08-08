@@ -189,3 +189,6 @@ cython_debug/
 ~$*.xlsx
 ~$*.ppt
 ~$*.pptx
+
+# 数据集
+data/
