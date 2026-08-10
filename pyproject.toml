@@ -12,9 +12,6 @@ dependencies = [
     "opencv-python>=5.0.0.93",
 ]
 
-[[tool.uv.index]]
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-
 [project.optional-dependencies]
 cpu = [
     "torch==2.13.0",
@@ -43,6 +40,9 @@ torchvision = [
     { index = "pytorch-cu132", extra = "cuda" },
 ]
 torchaudio = [{ index = "pytorch-cpu", extra = "cpu" }]
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 [[tool.uv.index]]
 name = "pytorch-cpu"
