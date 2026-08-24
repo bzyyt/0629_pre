@@ -1,0 +1,4 @@
+﻿config,learning_rate,best_epoch,best_train_acc,best_val_acc,test_acc
+cnn_learning_rate_0.1,0.1,30,0.762462962962963,0.7586666666666667,0.7582
+cnn_learning_rate_0.5,0.5,27,0.8583888888888889,0.8611666666666666,0.8511
+cnn_learning_rate_0.9,0.9,26,0.8760555555555556,0.8746666666666667,0.8694
