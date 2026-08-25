@@ -180,7 +180,7 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-# books/
+books/
 
 # Microsoft Office 临时锁文件
 ~$*.doc
@@ -194,4 +194,4 @@ cython_debug/
 data/
 
 # 权重
-.pth
+*.pth
