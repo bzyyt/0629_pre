@@ -1,0 +1,2 @@
+﻿config,learning_rate,best_epoch,best_train_acc,best_val_acc,test_acc
+VGG,0.05,18,0.96,0.9261666666666667,0.9213
