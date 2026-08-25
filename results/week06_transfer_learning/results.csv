@@ -1,0 +1,2 @@
+﻿config,learning_rate,best_epoch,best_train_acc,best_val_acc,test_acc
+AlexNet,0.01,29,0.8977222222222222,0.896,0.8933
