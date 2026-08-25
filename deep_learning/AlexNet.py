@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader, random_split
 from torchvision.datasets import FashionMNIST
 from torchvision.transforms import Compose, Resize, ToTensor
 
+netname = "AlexNet"
 # 超参数
 batch_size = 256
 num_epochs = 30
@@ -239,4 +240,4 @@ for cfg in config:
 
 # 准确率表格
 result_table = pd.DataFrame(all_results)
-result_table.to_csv(f"{path}/results.csv", index=False, encoding="utf-8-sig")
+result_table.to_csv(f"{path}/{netname}_results.csv", index=False, encoding="utf-8-sig")
