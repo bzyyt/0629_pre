@@ -1,0 +1,2 @@
+﻿config,learning_rate,best_epoch,best_train_acc,best_val_acc,test_acc
+NiN,0.1,19,0.7590740740740741,0.7585,0.7612
