@@ -1,0 +1,2 @@
+﻿config,learning_rate,best_epoch,best_train_acc,best_val_acc,test_acc
+ResNet,0.05,22,1.0,0.9238333333333333,0.9169
