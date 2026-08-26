@@ -1,0 +1,2 @@
+﻿config,learning_rate,best_epoch,best_train_acc,best_val_acc,test_acc
+GoogLeNet,0.1,20,0.9201481481481482,0.9033333333333333,0.8946
