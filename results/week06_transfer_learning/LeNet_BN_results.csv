@@ -1,0 +1,2 @@
+﻿config,learning_rate,best_epoch,best_train_acc,best_val_acc,test_acc
+LeNet_BN,0.1,27,0.9088888888888889,0.8891666666666667,0.8899
