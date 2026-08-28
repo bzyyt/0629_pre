@@ -1,0 +1,4 @@
+name,train_scope,best_epoch,best_train_acc,best_val_acc,best_val_loss,test_loss,test_acc
+scratch,all,10,0.375,0.355,1.6637080764770509,1.6552645645141602,0.39
+feature_extractor,fc,5,0.8208,0.807,0.5898067598342895,0.5659563045501709,0.809
+fine_tune,layer4,5,0.8302,0.808,0.6091218667030335,0.5862634482383728,0.808
