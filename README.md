@@ -72,3 +72,11 @@ pic1 = cv2.imread("../asserts/pic1.jpg")
 ```
 
 如果提示图片读取失败，请确认当前工作目录为 `image_processing`，或根据实际工作目录调整图片路径。
+
+在大模型有关代码运行之前，先在根目录运行：
+
+```powershell
+cp .env.example .env
+```
+
+然后在创建的.env文件里面填入所需的API密钥
