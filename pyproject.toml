@@ -9,6 +9,7 @@ dependencies = [
     "ipykernel>=7.3.0",
     "matplotlib>=3.11.1",
     "numpy>=2.4.6",
+    "openai>=3.6.0",
     "opencv-python>=5.0.0.93",
     "tqdm>=4.70.0",
 ]
