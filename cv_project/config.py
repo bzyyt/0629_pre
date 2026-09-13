@@ -22,17 +22,14 @@ class Config:
     FEATURE_EPOCHS: int = 5
     FINETUNE_EPOCHS: int = 5
 
-    TRAIN_SIZE: int = 5000
-    VAL_SIZE: int = 1000
-    TEST_SIZE: int = 1000
-    NUM_CLASSES: int = 10
+    NUM_CLASSES: int = 102
 
     # 设备
     use_gpu: bool = torch.cuda.is_available()
     device: str = "cuda" if use_gpu else "cpu"
 
     data_dir: Path = PROJECT_ROOT / "data"
-    out_dir: Path = PROJECT_ROOT / "results" / "training_template"
+    out_dir: Path = PROJECT_ROOT / "results" / "flowers102"
 
 
 cfg = Config()

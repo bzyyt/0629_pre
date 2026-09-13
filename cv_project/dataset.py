@@ -1,6 +1,6 @@
 import torch
 from config import cfg
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import DataLoader
 from torchvision.datasets import Flowers102
 from torchvision.transforms import Compose, Resize, transforms
 
@@ -26,39 +26,26 @@ def build_datasets():
     ])
 
     # 加载数据集
-    full_train_set = Flowers102(
+    train_set = Flowers102(
         root=cfg.data_dir,
         split="train",
         download=True,
         transform=train_transform,
     )
-    full_eval_set = Flowers102(
+    eval_set = Flowers102(
         root=cfg.data_dir,
         split="val",
         download=True,
         transform=eval_transform,
     )
-    full_test_set = Flowers102(
+    test_set = Flowers102(
         root=cfg.data_dir,
         split="test",
         download=True,
         transform=eval_transform,
     )
 
-    # 划分训练集和验证集
-    split_generator = torch.Generator().manual_seed(cfg.SEED)
-
-    train_indices = torch.randperm(len(full_train_set), generator=split_generator)
-    test_indices = torch.randperm(len(full_test_set), generator=split_generator)
-
-    train_set = Subset(full_train_set, train_indices[: cfg.TRAIN_SIZE].tolist())
-    val_set = Subset(
-        full_eval_set,
-        train_indices[cfg.TRAIN_SIZE : cfg.TRAIN_SIZE + cfg.VAL_SIZE].tolist(),
-    )
-    test_set = Subset(full_test_set, test_indices[: cfg.TEST_SIZE].tolist())
-
-    return train_set, val_set, test_set
+    return train_set, eval_set, test_set
 
 
 # 转换为数据加载器
