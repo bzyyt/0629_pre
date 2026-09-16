@@ -1,13 +1,18 @@
 import copy
+from typing import TypeVar
 
 import torch
 from config import cfg
 from evaluate import evaluate_model
+from models.custom_resnet import CustomResNet
 from torch import nn
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader
 from torchvision.models import ResNet
 from tqdm import tqdm
+
+# 训练返回原模型，保留调用方传入的具体模型类型。
+ModelT = TypeVar("ModelT", bound=ResNet | CustomResNet)
 
 
 # 计算需要训练的参数数量
@@ -16,7 +21,7 @@ def count_trainable_parameters(model):
 
 
 # 不同训练模式
-def set_train_mode(model: ResNet, mode: str):
+def set_train_mode(model: ResNet | CustomResNet, mode: str):
     if mode == "all":
         model.train()
     elif mode == "fc":
@@ -33,14 +38,14 @@ def set_train_mode(model: ResNet, mode: str):
 # 单个训练循环
 def train_model(
     name: str,
-    model: ResNet,
+    model: ModelT,
     train_scope: str,
     train_loader: DataLoader,
     val_loader: DataLoader,
     test_loader: DataLoader,
     optimizer: torch.optim.Optimizer,
     num_epochs: int,
-):
+) -> tuple[ModelT, dict[str, list[float]], dict[str, str | int | float]]:
     model.to(cfg.device)
 
     trainable_parameters = count_trainable_parameters(model)
