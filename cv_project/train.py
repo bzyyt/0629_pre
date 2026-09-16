@@ -31,6 +31,10 @@ def set_train_mode(model: ResNet | CustomResNet, mode: str):
         model.eval()
         model.layer4.train()
         model.fc.train()
+        # 固定 BN 的运行均值、方差，继续训练 layer4 和 fc
+        for module in model.layer4.modules():
+            if isinstance(module, nn.BatchNorm2d):
+                module.eval()
     else:
         raise ValueError(f"Unknown mode: {mode}")
 

@@ -18,9 +18,9 @@ class Config:
     finetune_layer4_learning_rate: float = 0.0001
     finetune_fc_learning_rate: float = 0.001
     batch_size: int = 256
-    SCRATCH_EPOCHS: int = 10
-    FEATURE_EPOCHS: int = 5
-    FINETUNE_EPOCHS: int = 5
+    SCRATCH_EPOCHS: int = 30
+    FEATURE_EPOCHS: int = 30
+    FINETUNE_EPOCHS: int = 30
 
     NUM_CLASSES: int = 102
 
