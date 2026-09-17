@@ -122,7 +122,9 @@ def train_model(
         train_loss = total_loss / total_samples
         train_acc = total_correct / total_samples
 
-        val_loss, val_acc = evaluate_model(model, val_loader, loss)
+        val_metrics = evaluate_model(model, val_loader, loss)
+        val_loss = val_metrics["loss"]
+        val_acc = val_metrics["top1_acc"]
 
         history["train_loss"].append(train_loss)
         history["train_acc"].append(train_acc)
@@ -155,13 +157,16 @@ def train_model(
     model.eval()
     torch.save(model.state_dict(), f"{cfg.out_dir}/{name}_best_model.pth")
 
-    test_loss, test_acc = evaluate_model(model, test_loader, loss)
+    test_metrics = evaluate_model(model, test_loader, loss)
+    test_loss = test_metrics["loss"]
+    test_acc = test_metrics["top1_acc"]
 
     print(
-        f"{name} | Best Epoch: {best_epoch}, "
-        f"Best Train Acc: {best_train_acc:.4f}, "
-        f"Best Val Acc: {best_val_acc:.4f}, "
-        f"Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.4f}"
+        f"Top-1 Accuracy: {test_metrics['top1_acc']:.2%} | "
+        f"Top-5 Accuracy: {test_metrics['top5_acc']:.2%} | "
+        f"Macro Precision: {test_metrics['macro_precision']:.2%} | "
+        f"Macro Recall: {test_metrics['macro_recall']:.2%} | "
+        f"Macro F1: {test_metrics['macro_f1']:.2%}"
     )
 
     result = {
@@ -174,5 +179,6 @@ def train_model(
         "test_loss": test_loss,
         "test_acc": test_acc,
     }
+    result.update({f"test_{key}": value for key, value in test_metrics.items()})
 
     return model, history, result
