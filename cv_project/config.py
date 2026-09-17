@@ -8,7 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 @dataclass
 class Config:
-    name: str = "ResNet18"
+    name: str = "flowers102"
 
     SEED: int = 42
 
@@ -17,7 +17,7 @@ class Config:
     feature_learning_rate: float = 0.01
     finetune_layer4_learning_rate: float = 0.0001
     finetune_fc_learning_rate: float = 0.001
-    batch_size: int = 256
+    batch_size: int = 32
     SCRATCH_EPOCHS: int = 30
     FEATURE_EPOCHS: int = 30
     FINETUNE_EPOCHS: int = 30
