@@ -22,6 +22,11 @@ class Config:
     FEATURE_EPOCHS: int = 30
     FINETUNE_EPOCHS: int = 30
 
+    # 对照实验：在原有随机裁剪、水平翻转之外增加轻度颜色扰动。
+    jitter_brightness: float = 0.15
+    jitter_contrast: float = 0.15
+    jitter_saturation: float = 0.10
+
     NUM_CLASSES: int = 102
 
     # 设备

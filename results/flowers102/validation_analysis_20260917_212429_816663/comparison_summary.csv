@@ -1,0 +1,5 @@
+﻿comparison,before_model,after_model,fixed,introduced,both_correct,both_wrong,samples,net_correct_gain,top1_delta
+baseline_finetuning,feature_extractor,fine_tune,44,24,825,127,1020,20,0.0196078431372549
+augmented_finetuning,feature_extractor_aug,fine_tune_aug,44,24,819,133,1020,20,0.0196078431372549
+fc_augmentation,feature_extractor,feature_extractor_aug,6,12,837,165,1020,-6,-0.0058823529411764705
+finetune_augmentation,fine_tune,fine_tune_aug,5,11,858,146,1020,-6,-0.0058823529411764705

@@ -1,0 +1,6 @@
+﻿image_name,true_class,status,before_pred,after_pred,before_confidence,after_confidence,before_top5_correct,after_top5_correct,before_true_rank,after_true_rank,image_path
+image_07056.jpg,66,fixed,87,66,0.43931087851524353,0.48423704504966736,1,1,2,1,D:\Documents\12\AI\0629_pre\data\flowers-102\jpg\image_07056.jpg
+image_07129.jpg,44,fixed,75,44,0.3944447338581085,0.43369680643081665,1,1,2,1,D:\Documents\12\AI\0629_pre\data\flowers-102\jpg\image_07129.jpg
+image_04440.jpg,89,fixed,42,89,0.3407706916332245,0.38785579800605774,1,1,2,1,D:\Documents\12\AI\0629_pre\data\flowers-102\jpg\image_04440.jpg
+image_04603.jpg,39,fixed,87,39,0.32823964953422546,0.28381073474884033,1,1,2,1,D:\Documents\12\AI\0629_pre\data\flowers-102\jpg\image_04603.jpg
+image_01314.jpg,50,fixed,75,50,0.2971610426902771,0.31471744179725647,1,1,3,1,D:\Documents\12\AI\0629_pre\data\flowers-102\jpg\image_01314.jpg

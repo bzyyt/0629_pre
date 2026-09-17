@@ -51,6 +51,8 @@ def main():
         torch.cuda.empty_cache()
 
     # 实验二：使用预训练模型，冻结卷积层，只训练全连接层
+    # 与增强组使用相同的 FC 初始化随机种子。
+    torch.manual_seed(cfg.SEED)
     train_loader, val_loader, test_loader = build_dataloaders(
         train_set, val_set, test_set
     )
@@ -81,6 +83,10 @@ def main():
     all_results.append(feature_extractor_result)
 
     # 实验三：解冻最后一层卷积层，训练全连接层和最后一层卷积层
+    torch.manual_seed(cfg.SEED + 1)
+    train_loader, val_loader, test_loader = build_dataloaders(
+        train_set, val_set, test_set
+    )
     del feature_extractor_optimizer
     unfreeze_layer4(feature_extractor_model)
     fine_tune_optimizer = torch.optim.SGD(
@@ -98,7 +104,7 @@ def main():
         weight_decay=1e-4,
     )
 
-    _, transfer_history, transfer_result = train_model(
+    feature_extractor_model, transfer_history, transfer_result = train_model(
         name="fine_tune",
         model=feature_extractor_model,
         train_scope="layer4",
@@ -111,6 +117,78 @@ def main():
 
     plot_history.plot_history(transfer_history, "fine_tune")
     all_results.append(transfer_result)
+
+    # 先保存原三个实验，后续增强实验不会改写它们的检查点。
+    for result in all_results:
+        result["augmentation"] = "baseline"
+    save_to_csv.save_results_to_csv(all_results)
+    del feature_extractor_model, fine_tune_optimizer
+    if cfg.use_gpu:
+        torch.cuda.empty_cache()
+
+    # 实验四：额外加入轻度 ColorJitter，从 ImageNet 预训练模型重新训练 FC。
+    # 仅训练集增强不同；始终复用原验证集、测试集。
+    augmented_train_set, _, _ = build_datasets(use_color_jitter=True)
+    torch.manual_seed(cfg.SEED)
+    augmented_model = build_feature_extractor_model(cfg.NUM_CLASSES).to(cfg.device)
+    train_loader, val_loader, test_loader = build_dataloaders(
+        augmented_train_set, val_set, test_set
+    )
+    augmented_fc_optimizer = torch.optim.SGD(
+        augmented_model.fc.parameters(),
+        lr=cfg.feature_learning_rate,
+        momentum=0.9,
+        weight_decay=1e-4,
+    )
+    augmented_model, augmented_fc_history, augmented_fc_result = train_model(
+        name="feature_extractor_aug",
+        model=augmented_model,
+        train_scope="fc",
+        train_loader=train_loader,
+        val_loader=val_loader,
+        test_loader=test_loader,
+        optimizer=augmented_fc_optimizer,
+        num_epochs=cfg.FEATURE_EPOCHS,
+    )
+    augmented_fc_result["augmentation"] = "color_jitter"
+    plot_history.plot_history(augmented_fc_history, "feature_extractor_aug")
+    all_results.append(augmented_fc_result)
+    save_to_csv.save_results_to_csv(all_results)
+
+    # 实验五：从实验四的最佳 FC 模型继续训练 layer4 + FC，保持 BN 统计量冻结。
+    del augmented_fc_optimizer
+    torch.manual_seed(cfg.SEED + 1)
+    train_loader, val_loader, test_loader = build_dataloaders(
+        augmented_train_set, val_set, test_set
+    )
+    unfreeze_layer4(augmented_model)
+    augmented_fine_optimizer = torch.optim.SGD(
+        [
+            {
+                "params": augmented_model.layer4.parameters(),
+                "lr": cfg.finetune_layer4_learning_rate,
+            },
+            {
+                "params": augmented_model.fc.parameters(),
+                "lr": cfg.finetune_fc_learning_rate,
+            },
+        ],
+        momentum=0.9,
+        weight_decay=1e-4,
+    )
+    _, augmented_fine_history, augmented_fine_result = train_model(
+        name="fine_tune_aug",
+        model=augmented_model,
+        train_scope="layer4",
+        train_loader=train_loader,
+        val_loader=val_loader,
+        test_loader=test_loader,
+        optimizer=augmented_fine_optimizer,
+        num_epochs=cfg.FINETUNE_EPOCHS,
+    )
+    augmented_fine_result["augmentation"] = "color_jitter"
+    plot_history.plot_history(augmented_fine_history, "fine_tune_aug")
+    all_results.append(augmented_fine_result)
 
     # 保存所有结果到 CSV
     save_to_csv.save_results_to_csv(all_results)

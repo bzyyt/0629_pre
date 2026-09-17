@@ -18,7 +18,20 @@ from torchvision import transforms
 from torchvision.datasets import Flowers102
 from torchvision.models import resnet18
 
-MODEL_NAMES = ("custom_scratch", "feature_extractor", "fine_tune")
+MODEL_NAMES = (
+    "custom_scratch",
+    "feature_extractor",
+    "fine_tune",
+    "feature_extractor_aug",
+    "fine_tune_aug",
+)
+
+COMPARISONS = (
+    ("baseline_finetuning", "feature_extractor", "fine_tune"),
+    ("augmented_finetuning", "feature_extractor_aug", "fine_tune_aug"),
+    ("fc_augmentation", "feature_extractor", "feature_extractor_aug"),
+    ("finetune_augmentation", "fine_tune", "fine_tune_aug"),
+)
 
 
 def write_csv(path, rows, fields):
@@ -107,6 +120,8 @@ def gallery(records, destination, title):
             ax.imshow(crop(image.convert("RGB")))
         ax.set_title(
             f"{record['image_name']}\n"
+            + record.get("comparison_caption", "")
+            +
             f"True {record['true_class']} -> Pred {record['predicted_class']} "
             f"({record['confidence']:.1%})\n"
             f"Top5: {record['top5_classes']}\n"
@@ -117,6 +132,87 @@ def gallery(records, destination, title):
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     fig.savefig(destination, dpi=130)
     plt.close(fig)
+
+
+def compare_predictions(before, after):
+    """按图片身份配对；四类互斥状态覆盖全部样本。"""
+    after_by_name = {r["image_name"]: r for r in after}
+    if (len(after_by_name) != len(after) or len({r["image_name"] for r in before}) != len(before)
+            or {r["image_name"] for r in before} != set(after_by_name)):
+        raise ValueError("比较模型的图片集合不一致或存在重复记录")
+    rows = []
+    for a in before:
+        b = after_by_name[a["image_name"]]
+        if a["true_class"] != b["true_class"]:
+            raise ValueError(f"真实标签不一致：{a['image_name']}")
+        ac, bc = bool(a["top1_correct"]), bool(b["top1_correct"])
+        status = ("both_correct" if ac else "fixed") if bc else ("introduced" if ac else "both_wrong")
+        rows.append({
+            "image_name": a["image_name"], "true_class": a["true_class"],
+            "status": status,
+            "before_pred": a["predicted_class"], "after_pred": b["predicted_class"],
+            "before_confidence": a["confidence"], "after_confidence": b["confidence"],
+            "before_top5_correct": a["top5_correct"], "after_top5_correct": b["top5_correct"],
+            "before_true_rank": a["true_rank"], "after_true_rank": b["true_rank"],
+            "image_path": b["image_path"],
+        })
+    counts = {status: sum(r["status"] == status for r in rows)
+              for status in ("fixed", "introduced", "both_correct", "both_wrong")}
+    n = len(rows)
+    if not n:
+        raise ValueError("没有可比较的样本")
+    counts.update(samples=n, net_correct_gain=counts["fixed"] - counts["introduced"],
+                  top1_delta=(counts["fixed"] - counts["introduced"]) / n)
+    return rows, counts
+
+
+def export_comparisons(predictions, output, examples):
+    root = output / "comparisons"
+    root.mkdir()
+    totals, sections = [], ["## 模型逐图对照", "",
+        "前模型→后模型：修正=错→对，新增错误=对→错；净收益=修正−新增。",
+        "增强微调继承增强 FC，故微调增强对比反映整条训练流程的变化。", "",
+        "| 对照 | 前模型 → 后模型 | 修正 | 新增错误 | 都正确 | 都错误 | 净收益 |",
+        "|---|---|---:|---:|---:|---:|---:|"]
+    image_sections = []
+    for key, before_name, after_name in COMPARISONS:
+        rows, counts = compare_predictions(predictions[before_name], predictions[after_name])
+        folder = root / key
+        folder.mkdir()
+        totals.append({"comparison": key, "before_model": before_name, "after_model": after_name, **counts})
+        write_csv(folder / "all_samples.csv", rows, list(rows[0]))
+        class_rows = []
+        for c in range(cfg.NUM_CLASSES):
+            subset = [r for r in rows if r["true_class"] == c]
+            values = {s: sum(r["status"] == s for r in subset)
+                      for s in ("fixed", "introduced", "both_correct", "both_wrong")}
+            class_rows.append({"class_id": c, "support": len(subset), **values,
+                               "net_correct_gain": values["fixed"] - values["introduced"]})
+        write_csv(folder / "per_class_changes.csv", class_rows, list(class_rows[0]))
+        sections.append(f"| {key} | {before_name} → {after_name} | {counts['fixed']} | {counts['introduced']} | {counts['both_correct']} | {counts['both_wrong']} | {counts['net_correct_gain']:+d} |")
+        after_map = {r["image_name"]: r for r in predictions[after_name]}
+        image_sections.extend(["", f"### {before_name} → {after_name}", ""])
+        selected_rows = []
+        for status, title in (("fixed", "修正的错误"), ("introduced", "新增的错误")):
+            subset = [r for r in rows if r["status"] == status]
+            confidence_key = "before_confidence" if status == "fixed" else "after_confidence"
+            subset.sort(key=lambda r: (-r[confidence_key], r["image_name"]))
+            write_csv(folder / f"{status}.csv", subset, list(rows[0]))
+            selected_rows.extend(subset[:examples])
+            display = []
+            for r in subset[:examples]:
+                display.append({**after_map[r["image_name"]],
+                    "comparison_caption": f"Before: {r['before_pred']} ({r['before_confidence']:.1%})\n"})
+            gallery(display, folder / f"{status}.png", f"{key}: {status} (Pred = after)")
+            if display:
+                image_sections.extend([f"**{title}**", "", f"![{title}](./comparisons/{key}/{status}.png)", ""])
+            else:
+                image_sections.extend([f"{title}：0 张。", ""])
+        write_csv(folder / "selected_examples.csv", selected_rows, list(rows[0]))
+    write_csv(output / "comparison_summary.csv", totals, list(totals[0]))
+    sections.extend(["", "逐图明细、修正/新增错误清单和逐类净变化见 comparisons/ 对应子目录。",
+                     "图片为确定性挑选：修正组按前模型错误置信度降序，新增组按后模型错误置信度降序；不代表随机样本。", ""])
+    return sections + image_sections
 
 
 def analyze(model, dataset, loader, folder, examples):
@@ -329,6 +425,7 @@ def main():
             ),
         })
     write_csv(output / "model_comparison.csv", comparison, list(comparison[0]))
+    comparison_sections = export_comparisons(predictions, output, args.examples)
     header = [
         "# Flowers102 验证集误分类分析",
         "",
@@ -359,7 +456,7 @@ def main():
         "- summary.csv 为总体指标；每个模型目录包含 per_class_metrics.csv、confused_pairs.csv、confusion_matrix.csv、predictions.csv、selected_errors.csv；metadata.json 记录配置和权重 SHA256。",
         "",
     ])
-    (output / "report.md").write_text("\n".join(header + details), encoding="utf-8")
+    (output / "report.md").write_text("\n".join(header + comparison_sections + details), encoding="utf-8")
     (output / "metadata.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
     )

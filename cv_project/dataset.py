@@ -6,15 +6,26 @@ from torchvision.transforms import Compose, Resize, transforms
 
 
 # 加载数据集
-def build_datasets():
+def build_datasets(use_color_jitter: bool = False):
     # 标准化
     normalize = transforms.Normalize(
         mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
     )
     # 数据增强
-    train_transform = Compose([
+    train_steps: list = [
         transforms.RandomResizedCrop(224, scale=(0.7, 1.0)),
         transforms.RandomHorizontalFlip(),
+    ]
+    if use_color_jitter:
+        train_steps.append(
+            transforms.ColorJitter(
+                brightness=cfg.jitter_brightness,
+                contrast=cfg.jitter_contrast,
+                saturation=cfg.jitter_saturation,
+            )
+        )
+    train_transform = Compose([
+        *train_steps,
         transforms.ToTensor(),
         normalize,
     ])
